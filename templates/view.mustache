@@ -1,0 +1,17 @@
+<div class="mod-stream">
+    <!--<h2>{{name}}</h2>
+    <div class="description">{{{description}}}</div>-->
+
+    Hier muss dann die Stream-Funktion rein
+    
+
+    <form method="post" action="{{{formaction}}}">
+        <input type="hidden" name="id" value="{{coursemodule}}">
+        <input type="hidden" name="action" value="submit">
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+
+        <button type="submit" class="btn btn-primary">
+            {{#str}}getpoints, mod_stream{{/str}} ({{points}})
+        </button>
+    </form>
+</div>

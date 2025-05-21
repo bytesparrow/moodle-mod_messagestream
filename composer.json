@@ -1,0 +1,21 @@
+{
+    "name": "bytesparrow/stream",
+    "description": "A Moodle-activity. It shows the interactive stream. For MedienLabor+",
+    "type": "moodle-mod",
+    "keywords": ["moodle", "communication"],
+    "license": "GPLv3",
+    "version": "v1.0-alpha3",
+    "authors": [
+        {
+            "name": "Bernhard Strehl",
+            "email": "moodle@bytesparrow.de",
+            "homepage": "https://www.bytesparrow.de",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "composer/installers": "~2.2",
+        "moodle/moodle": "v4.*"
+    }
+}

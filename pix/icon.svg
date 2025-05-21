@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Rahmen/Kästchen -->
+  <rect x="1" y="1" width="62" height="62" rx="8" ry="8" stroke="black" stroke-width="2" />
+
+  <!-- Sprechblase (Wolkenform) -->
+  <path d="M20,40 C15,38 12,34 12,30 C12,24 18,20 24,22 C26,17 34,17 36,22 C42,20 50,24 50,30 C50,35 45,39 40,40 L35,46 L35,42 C30,42 25,42 20,40 Z"
+        stroke="black" stroke-width="2" />
+
+  <!-- Drei Punkte (symbolisieren Nachricht) -->
+  <circle cx="28" cy="54" r="2" fill="black"/>
+  <circle cx="32" cy="54" r="2" fill="black"/>
+  <circle cx="36" cy="54" r="2" fill="black"/>
+</svg>
