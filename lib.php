@@ -50,7 +50,7 @@ function stream_update_instance($data, $mform) {
     $data->intro = $data->introeditor['text'];
     $data->introformat = $data->introeditor['format'];
   }
-
+  //normal nicht nötigt, $data->promptrefinement ist bereits der Text
   if (is_array($data->promptrefinement)) {
     $data->promptrefinement = $data->promptrefinement['text'];
   }

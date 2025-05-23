@@ -16,8 +16,8 @@ class mod_stream_mod_form extends moodleform_mod {
 
         $this->standard_intro_elements();
 
-        $mform->addElement('editor', 'promptrefinement', get_string('promptrefinement', 'mod_stream'));
-        $mform->setType('promptrefinement', PARAM_RAW);
+        $mform->addElement('textarea', 'promptrefinement', get_string('promptrefinement', 'mod_stream'), array('rows' => 10, 'cols' => 60));
+        $mform->setType('promptrefinement', PARAM_TEXT);
 
         $mform->addElement('text', 'points', get_string('points', 'mod_stream'));
         $mform->setType('points', PARAM_INT);
