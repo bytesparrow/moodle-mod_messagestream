@@ -7,7 +7,7 @@
         stroke="black" stroke-width="2" />
 
   <!-- Drei Punkte (symbolisieren Nachricht) -->
-  <circle cx="28" cy="54" r="2" fill="black"/>
+  <circle cx="24" cy="54" r="2" fill="black"/>
   <circle cx="32" cy="54" r="2" fill="black"/>
-  <circle cx="36" cy="54" r="2" fill="black"/>
+  <circle cx="40" cy="54" r="2" fill="black"/>
 </svg>
