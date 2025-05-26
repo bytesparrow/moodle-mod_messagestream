@@ -28,6 +28,15 @@ class view implements renderable, templatable {
     $data->formaction = new \moodle_url('/mod/stream/view.php', ['id' => $this->stream->coursemodule]);
     $data->coursemodule = $this->stream->coursemodule;
     $data->sesskey = sesskey();
+    
+    // Use StreamService to get context and render the stream
+       $service = new \local_nmstream\StreamService();
+       $currenctcontext = $service->getStreamRootContext();
+       if ($currenctcontext === null) {
+           return "";
+       }
+    $data->streamhtml =  $service->renderStream($currenctcontext);
+
 
     $data->getpointslabel = get_string('getpoints', 'mod_stream');
     return $data;

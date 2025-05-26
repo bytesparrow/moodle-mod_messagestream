@@ -7,7 +7,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_stream';
-$plugin->version = 2025051609;
+$plugin->version = 2025051610;
 $plugin->requires = 2021051700; // Moodle 3.11+
 $plugin->cron = 0;
 $plugin->maturity = MATURITY_STABLE;
