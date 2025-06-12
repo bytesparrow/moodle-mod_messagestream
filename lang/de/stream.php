@@ -7,7 +7,7 @@
 
 $string['modulename'] = 'Stream-Aktivität';
 $string['modulenameplural'] = 'Stream-Aktivitäten';
-$string['modulename_help'] = 'Verwenden Sie dieses Modul in Kombination mit local_nmstream.';
+$string['modulename_help'] = 'Die Stream-Aktivität ermöglicht verschachtelte Diskussionen zwischen Studierenden und einer KI. Studierende können Beiträge posten und dafür Punkte erhalten. Die KI kann dabei Fragen beantworten oder Stellungnahmen zu Aussagen abgeben. Diese Aktivität ist für die Verwendung mit local_nmstream vorgesehen und unterstützt interaktive, KI-gestützte Lernformate.';
 $string['streamname'] = 'Aktivitätsname';
 $string['promptrefinement'] = 'Prompt-Verfeinerung (für KI verwendet). Z. B.: "Gib deine Einschätzung zum Post eines Users ab."';
 $string['points'] = 'Vergebene Punkte (für Bewertungsübersicht)';
@@ -18,4 +18,4 @@ $string['pluginadministration'] = 'Plugin-Verwaltung';
 $string['getpoints'] = 'Punkte erhalten';
 $string['pointsawarded'] = 'Punkte wurden gutgeschrieben!';
 $string['adminpoints'] = 'Vergebene Punkte';
-$string['adminpoints_help'] = 'Wenn ein Lernender einen Beitrag postet, kann er hierfür (einmalig) Punkte erhalten. Wieviele, geben Sie hier an.';
+$string['adminpoints_help'] = 'Wenn ein Lernender einen Beitrag postet, kann die Person hierfür (einmalig) Punkte erhalten. Wieviele, geben Sie hier an.';

@@ -8,4 +8,10 @@ $observers = [
         'includefile' => '/mod/stream/classes/observer.php',
         'priority'    => 1000,
     ],
+  [
+        'eventname'   => '\local_nmstream\event\comment_deleted',
+        'callback'    => '\mod_stream\observer::handle_stream_entry_deleted',
+        'includefile' => '/mod/stream/classes/observer.php',
+        'priority'    => 1000,
+    ],
 ];

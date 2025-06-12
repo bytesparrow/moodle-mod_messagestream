@@ -135,7 +135,7 @@ function stream_grade_item_update($stream, $userid = null) {
  * @param type $nullifnone
  * @return type
  */
-function stream_update_grades(stdClass $stream, $userid = 0, $nullifnone = true) {
+function stream_update_grades(stdClass $stream, $userid = 0, $revoke_points = false) {
     global $DB;
 
     // Fallback: Sicherstellen, dass coursemodule vorhanden ist.
@@ -154,7 +154,7 @@ function stream_update_grades(stdClass $stream, $userid = 0, $nullifnone = true)
         // Einzelner Nutzer – setze Bewertung auf volle Punktzahl
         $grades[$userid] = (object)[
             'userid' => $userid,
-            'rawgrade' => (float)$stream->points,
+            'rawgrade' => $revoke_points? NULL: (float)($stream->points)
         ];
     } else {
         
@@ -165,7 +165,7 @@ function stream_update_grades(stdClass $stream, $userid = 0, $nullifnone = true)
         foreach ($users as $user) {
             $grades[$user->id] = (object)[
                 'userid' => $user->id,
-                'rawgrade' => (float)$stream->points,  // oder 0, je nach Logik
+                'rawgrade' => $revoke_points? NULL: (float)($stream->points)  
             ];
     }
     }
@@ -174,6 +174,19 @@ function stream_update_grades(stdClass $stream, $userid = 0, $nullifnone = true)
     
     return grade_update('mod/stream', $stream->course, 'mod', 'stream',
                         $stream->id, 0, $grades);
+}
+
+function stream_revoke_grade($course_id, $activityid, $user_id)
+{
+  if ($user_id) {
+        // Einzelner Nutzer – setze Bewertung auf volle Punktzahl
+        $grades[$user_id] = (object)[
+            'userid' => $user_id,
+            'rawgrade' => 0
+        ];
+    }
+    return grade_update('mod/stream', $course_id, 'mod', 'stream',
+                        $activityid, 0, $grades);
 }
     
 
@@ -184,11 +197,12 @@ function stream_update_grades(stdClass $stream, $userid = 0, $nullifnone = true)
  * 
  * @global type $DB
  * @global type $CFG
- * @param int $cmid
- * @param int $userid
+ * @param int $cmid course-module-id
+ * @param int $userid id of the user to give points to
+ * @param bool $revoke_points if set to true, the users' points will be zero.
  * @return bool
  */
-function stream_award_points_for_user(int $cmid, int $userid): bool {
+function stream_set_points_for_user(int $cmid, int $userid, $revoke_points=false): bool {
   global $DB, $CFG;
 
   // 1. Kursmodul prüfen und laden
@@ -210,7 +224,7 @@ function stream_award_points_for_user(int $cmid, int $userid): bool {
   }
     
   // 6. Bewertung schreiben
-  $result = stream_update_grades($stream, $userid);
+  $result = stream_update_grades($stream, $userid, $revoke_points);
 
   // 7. Erfolg prüfen
 // Akzeptiere TRUE, 0 (kein Update notwendig), oder ein Array ohne Fehler
