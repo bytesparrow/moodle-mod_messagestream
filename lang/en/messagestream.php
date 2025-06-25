@@ -22,3 +22,5 @@ $string['getpoints'] = 'Get points';
 $string['pointsawarded'] = 'Points have been awarded!';
 $string['adminpoints'] = 'Points awarded';
 $string['adminpoints_help'] = 'When a learner posts a contribution, they can receive points for it (once). Specify the number of points here.';
+$string['aienabledcourses'] = 'AI enabled in courses';
+$string['aienabledcourses_desc'] = 'Comma-separated list of course IDs where the Message Stream AI feature is enabled. Example: 2,5,8';
