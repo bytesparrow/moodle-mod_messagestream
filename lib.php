@@ -7,13 +7,13 @@ require_once($CFG->dirroot . '/lib/gradelib.php');
   
 
 /**
- * Adds a new instance of the stream module.
+ * Adds a new instance of the messagestream module.
  *
  * @param object $data
  * @param object $mform
  * @return int new instance id
  */
-function stream_add_instance($data, $mform) {
+function messagestream_add_instance($data, $mform) {
   global $DB;
 
   $data->timecreated = time();
@@ -30,7 +30,7 @@ function stream_add_instance($data, $mform) {
     $data->promptrefinement = $data->promptrefinement['text'];
   }
 
-  return $DB->insert_record('stream', $data);
+  return $DB->insert_record('messagestream', $data);
 }
 
 /**
@@ -40,7 +40,7 @@ function stream_add_instance($data, $mform) {
  * @param object $mform
  * @return bool
  */
-function stream_update_instance($data, $mform) {
+function messagestream_update_instance($data, $mform) {
   global $DB;
 
   $data->timemodified = time();
@@ -55,42 +55,42 @@ function stream_update_instance($data, $mform) {
     $data->promptrefinement = $data->promptrefinement['text'];
   }
   
- $succ = $DB->update_record('stream', $data);
+ $succ = $DB->update_record('messagestream', $data);
 
   // Ergänze coursemodule ID (wird z. B. für context benötigt).
     if (!isset($data->coursemodule)) {
-        $cm = get_coursemodule_from_instance('stream', $data->id, $data->course, false, MUST_EXIST);
+        $cm = get_coursemodule_from_instance('messagestream', $data->id, $data->course, false, MUST_EXIST);
         $data->coursemodule = $cm->id;
     }
 
     // Alle bisherigen Bewertungen aktualisieren
-    stream_update_grades($data);
+    messagestream_update_grades($data);
     return $succ;
 }
 
 /**
- * Deletes a stream instance.
+ * Deletes a messagestream instance.
  *
  * @param int $id
  * @return bool
  */
-function stream_delete_instance($id) {
+function messagestream_delete_instance($id) {
   global $DB;
 
-  if (!$stream = $DB->get_record('stream', ['id' => $id])) {
+  if (!$messagestream = $DB->get_record('messagestream', ['id' => $id])) {
     return false;
   }
 
-  return $DB->delete_records('stream', ['id' => $id]);
+  return $DB->delete_records('messagestream', ['id' => $id]);
 }
 
 /**
- * Returns the list of features supported by the stream module.
+ * Returns the list of features supported by the messagestream module.
  *
  * @param string $feature
  * @return mixed
  */
-function stream_supports($feature) {
+function messagestream_supports($feature) {
   switch ($feature) {
     case FEATURE_GRADE_HAS_GRADE: return true;
     case FEATURE_GRADE_OUTCOMES: return false;
@@ -103,13 +103,13 @@ function stream_supports($feature) {
   }
 }
 
-function stream_grade_item_update($stream, $userid = null) {
+function messagestream_grade_item_update($messagestream, $userid = null) {
 
 
   $item = [
-    'itemname' => clean_param($stream->name, PARAM_NOTAGS),
+    'itemname' => clean_param($messagestream->name, PARAM_NOTAGS),
     'gradetype' => GRADE_TYPE_VALUE,
-    'grademax' => (float) $stream->points,
+    'grademax' => (float) $messagestream->points,
     'grademin' => 0
   ];
 
@@ -118,34 +118,34 @@ function stream_grade_item_update($stream, $userid = null) {
     $grades = [
       $userid => [
         'userid' => $userid,
-        'rawgrade' => (float) $stream->points
+        'rawgrade' => (float) $messagestream->points
       ]
     ];
-    grade_update('mod/stream', $stream->course, 'mod', 'stream', $stream->id, 0, $grades, $item);
+    grade_update('mod/messagestream', $messagestream->course, 'mod', 'messagestream', $messagestream->id, 0, $grades, $item);
   }
   else {
-    grade_update('mod/stream', $stream->course, 'mod', 'stream', $stream->id, 0, null, $item);
+    grade_update('mod/messagestream', $messagestream->course, 'mod', 'messagestream', $messagestream->id, 0, null, $item);
   }
 }
 /**
  * Schreibe alle ($userid=0) oder eine einzelne Bewertung ($userid=X) neu. Punkte werden aus der Activity-Config genommen.
  * @global type $DB
- * @param stdClass $stream
+ * @param stdClass $messagestream
  * @param type $userid
  * @param type $nullifnone
  * @return type
  */
-function stream_update_grades(stdClass $stream, $userid = 0, $revoke_points = false) {
+function messagestream_update_grades(stdClass $messagestream, $userid = 0, $revoke_points = false) {
     global $DB;
 
     // Fallback: Sicherstellen, dass coursemodule vorhanden ist.
-    if (!isset($stream->coursemodule)) {
-        $cm = get_coursemodule_from_instance('stream', $stream->id, $stream->course);
+    if (!isset($messagestream->coursemodule)) {
+        $cm = get_coursemodule_from_instance('messagestream', $messagestream->id, $messagestream->course);
         if (!$cm) {
-            debugging("stream_update_grades: coursemodule not found for stream id {$stream->id}", DEBUG_DEVELOPER);
+            debugging("messagestream_update_grades: coursemodule not found for messagestream id {$messagestream->id}", DEBUG_DEVELOPER);
             return null;
         }
-        $stream->coursemodule = $cm->id;
+        $messagestream->coursemodule = $cm->id;
     }
 
     $grades = [];
@@ -154,29 +154,29 @@ function stream_update_grades(stdClass $stream, $userid = 0, $revoke_points = fa
         // Einzelner Nutzer – setze Bewertung auf volle Punktzahl
         $grades[$userid] = (object)[
             'userid' => $userid,
-            'rawgrade' => $revoke_points? NULL: (float)($stream->points)
+            'rawgrade' => $revoke_points? NULL: (float)($messagestream->points)
         ];
     } else {
         
         // Alle Nutzer, die Zugriff auf die Aktivität haben
-        $context = context_module::instance($stream->coursemodule);
-        $users = get_enrolled_users($context, 'mod/stream:view');
+        $context = context_module::instance($messagestream->coursemodule);
+        $users = get_enrolled_users($context, 'mod/messagestream:view');
 
         foreach ($users as $user) {
             $grades[$user->id] = (object)[
                 'userid' => $user->id,
-                'rawgrade' => $revoke_points? NULL: (float)($stream->points)  
+                'rawgrade' => $revoke_points? NULL: (float)($messagestream->points)  
             ];
     }
     }
   // ✳️ Gradebook-Item aktualisieren (z. B. Name oder Maximalpunktzahl geändert)
-    stream_grade_item_update($stream);
+    messagestream_grade_item_update($messagestream);
     
-    return grade_update('mod/stream', $stream->course, 'mod', 'stream',
-                        $stream->id, 0, $grades);
+    return grade_update('mod/messagestream', $messagestream->course, 'mod', 'messagestream',
+                        $messagestream->id, 0, $grades);
 }
 
-function stream_revoke_grade($course_id, $activityid, $user_id)
+function messagestream_revoke_grade($course_id, $activityid, $user_id)
 {
   if ($user_id) {
         // Einzelner Nutzer – setze Bewertung auf volle Punktzahl
@@ -185,14 +185,14 @@ function stream_revoke_grade($course_id, $activityid, $user_id)
             'rawgrade' => 0
         ];
     }
-    return grade_update('mod/stream', $course_id, 'mod', 'stream',
+    return grade_update('mod/messagestream', $course_id, 'mod', 'messagestream',
                         $activityid, 0, $grades);
 }
     
 
 /**
  * Awards the (set) points for a user with a given $cmid (COURSE MODULE ID).
- * Points are defined in the stream-activity. Can not override the num of points.
+ * Points are defined in the messagestream-activity. Can not override the num of points.
  * For Sergej.
  * 
  * @global type $DB
@@ -202,18 +202,18 @@ function stream_revoke_grade($course_id, $activityid, $user_id)
  * @param bool $revoke_points if set to true, the users' points will be zero.
  * @return bool
  */
-function stream_set_points_for_user(int $cmid, int $userid, $revoke_points=false): bool {
+function messagestream_set_points_for_user(int $cmid, int $userid, $revoke_points=false): bool {
   global $DB, $CFG;
 
   // 1. Kursmodul prüfen und laden
-  if (!$cm = get_coursemodule_from_id('stream', $cmid)) {
-    debugging("Modul-ID $cmid konnte nicht gefunden werden (mod_stream)", DEBUG_DEVELOPER);
+  if (!$cm = get_coursemodule_from_id('messagestream', $cmid)) {
+    debugging("Modul-ID $cmid konnte nicht gefunden werden (mod_messagestream)", DEBUG_DEVELOPER);
     return false;
   }
 
   // 2. Stream-Aktivität laden
-  if (!$stream = $DB->get_record('stream', ['id' => $cm->instance])) {
-    debugging("Stream-Instanz mit ID {$cm->instance} nicht gefunden", DEBUG_DEVELOPER);
+  if (!$messagestream = $DB->get_record('messagestream', ['id' => $cm->instance])) {
+    debugging("Messagestream-Instanz mit ID {$cm->instance} nicht gefunden", DEBUG_DEVELOPER);
     return false;
   }
 
@@ -224,7 +224,7 @@ function stream_set_points_for_user(int $cmid, int $userid, $revoke_points=false
   }
     
   // 6. Bewertung schreiben
-  $result = stream_update_grades($stream, $userid, $revoke_points);
+  $result = messagestream_update_grades($messagestream, $userid, $revoke_points);
 
   // 7. Erfolg prüfen
 // Akzeptiere TRUE, 0 (kein Update notwendig), oder ein Array ohne Fehler
@@ -238,20 +238,20 @@ function stream_set_points_for_user(int $cmid, int $userid, $revoke_points=false
 /**
  * Handles user grading when the button is clicked.
  * //TODO only temporary for tests
- * @param stdClass $stream
+ * @param stdClass $messagestream
  * @param int $userid
  * @return void
  */
-function stream_submit_activity($stream, $userid) {
+function messagestream_submit_activity($messagestream, $userid) {
   // Trage die Punkte sofort ins Gradebook ein
-  stream_grade_item_update($stream, $userid);
+  messagestream_grade_item_update($messagestream, $userid);
 }
 
 /**
   Wenn du das Icon auch bei „Aktivität oder Material anlegen“ schöner darstellen willst, ergänze in deiner lib.php diese Funktion:
  */
-function mod_stream_get_shortcut_icon() {
-  return ['mod_stream', 'icon'];
+function mod_messagestream_get_shortcut_icon() {
+  return ['mod_messagestream', 'icon'];
 }
 
 /**
@@ -260,6 +260,6 @@ function mod_stream_get_shortcut_icon() {
  *
  * @return bool True if the activity is branded, false otherwise.
  */
-function stream_is_branded(): bool {
+function messagestream_is_branded(): bool {
   return true;
 }

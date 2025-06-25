@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    mod_stream
+ * @package    mod_messagestream
  * @subpackage backup-moodle2
  * @copyright  2025 Bernhard Strehl <moodle@bytesparrow.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

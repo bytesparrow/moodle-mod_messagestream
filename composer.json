@@ -1,10 +1,10 @@
 {
-    "name": "bytesparrow/stream",
-    "description": "A Moodle-activity. It shows the interactive stream. For MedienLabor+",
+    "name": "bytesparrow/messagestream",
+    "description": "A Moodle-activity. It shows the interactive message stream. For MedienLabor+",
     "type": "moodle-mod",
     "keywords": ["moodle", "communication"],
     "license": "GPLv3",
-    "version": "v1.0-alpha6",
+    "version": "v2.0-alpha2",
     "authors": [
         {
             "name": "Bernhard Strehl",

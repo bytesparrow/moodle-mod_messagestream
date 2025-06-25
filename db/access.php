@@ -4,7 +4,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $capabilities = [
 
-    'mod/stream:addinstance' => [
+    'mod/messagestream:addinstance' => [
         'riskbitmask' => RISK_SPAM | RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -15,7 +15,7 @@ $capabilities = [
         'clonepermissionsfrom' => 'moodle/course:manageactivities'
     ],
 
-    'mod/stream:submit' => [
+    'mod/messagestream:submit' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => [

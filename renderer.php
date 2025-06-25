@@ -1,5 +1,5 @@
 <?php
-namespace mod_stream\output;
+namespace mod_messagestream\output;
 
 defined('MOODLE_INTERNAL') || die();
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/stream/db" VERSION="2025051600" COMMENT="XMLDB file for stream module" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<XMLDB PATH="mod/messagestream/db" VERSION="2025051600" COMMENT="XMLDB file for messagestream module" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <TABLES>
-    <TABLE NAME="stream" COMMENT="Table for Stream activity">
+    <TABLE NAME="messagestream" COMMENT="Table for Messagestream activity">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true"/>

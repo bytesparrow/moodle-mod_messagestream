@@ -1,6 +1,6 @@
-# 📡 Stream Activity (mod_stream) for Moodle
+# 📡 Messagestream Activity (mod_messagestream) for Moodle
 
-**Stream Activity** ist ein benutzerdefiniertes Moodle-Aktivitätsmodul, das in enger Zusammenarbeit mit dem Plugin [`local_nm_stream`](https://github.com/dein-repo/local_nm_stream) arbeitet. Es stellt eine einfache Aktivität bereit, bei der Teilnehmer*innen durch einen Buttonklick Punkte erhalten können. Das Plugin eignet sich ideal zur Anbindung an automatische Feedback- oder Prompt-Refinement-Prozesse.
+**Messagestream Activity** ist ein benutzerdefiniertes Moodle-Aktivitätsmodul, das in enger Zusammenarbeit mit dem Plugin [`local_nm_stream`](https://github.com/dein-repo/local_nm_stream) arbeitet. Es stellt eine einfache Aktivität bereit, bei der Teilnehmer*innen durch einen Buttonklick Punkte erhalten können. Das Plugin eignet sich ideal zur Anbindung an automatische Feedback- oder Prompt-Refinement-Prozesse.
 
 ---
 
@@ -29,7 +29,7 @@ Ohne `local_nm_stream` ist die Funktionalität stark eingeschränkt und macht **
 
 ## 🧪 Anwendungsbeispiel
 
-1. Lehrkraft erstellt eine neue *Stream Activity* im Kurs.
+1. Lehrkraft erstellt eine neue *Messagestream Activity* im Kurs.
 2. Gibt eine Beschreibung ein und optional einen Prompt-Refinement-Text.
 3. Konfiguriert die Punktevergabe (z. B. 10 Punkte).
 4. Erstellen Lernende einen Stream-Eintrag, erhalten sie diese Punkte gutgeschrieben
@@ -39,7 +39,7 @@ Ohne `local_nm_stream` ist die Funktionalität stark eingeschränkt und macht **
 
 ## 🛠️ Installation
 
-1. Lege den Ordner `mod_stream` im Verzeichnis `moodle/mod/` an.
+1. Lege den Ordner `mod_messagestream` im Verzeichnis `moodle/mod/` an.
 2. Kopiere alle Dateien in diesen Ordner.
 3. Rufe die Moodle-Administrationsseite auf, um die Installation abzuschließen.
 4. Stelle sicher, dass auch `local_nm_stream` installiert und konfiguriert ist.

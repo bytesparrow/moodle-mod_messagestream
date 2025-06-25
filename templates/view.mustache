@@ -1,8 +1,8 @@
-<div class="mod-stream">
+<div class="mod-messagestream">
     <!--<h2>{{name}}</h2>
     <div class="description">{{{description}}}</div>-->
 
-    {{{ streamhtml }}}
+    {{{ messagestreamhtml }}}
 
     <form method="post" action="{{{formaction}}}">
         <input type="hidden" name="id" value="{{coursemodule}}">
@@ -10,7 +10,7 @@
         <input type="hidden" name="sesskey" value="{{sesskey}}">
 
         <button type="submit" class="btn btn-primary">
-            {{#str}}getpoints, mod_stream{{/str}} ({{points}})
+            {{#str}}getpoints, mod_messagestream{{/str}} ({{points}})
         </button>
     </form>
 </div>
