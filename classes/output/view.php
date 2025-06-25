@@ -29,6 +29,8 @@ class view implements renderable, templatable {
     $data->coursemodule = $this->messagestream->coursemodule;
     $data->sesskey = sesskey();
     
+    $enableai = (bool)$this->messagestream->enableai;
+
     // Use StreamService to get context and render the stream
        $service = new \local_nmstream\StreamService();
        $currenctcontext = $service->getStreamRootContext();

@@ -16,8 +16,16 @@ class mod_messagestream_mod_form extends moodleform_mod {
 
         $this->standard_intro_elements();
 
+
+        $mform->addElement('advcheckbox', 'enableai', get_string('enableai', 'mod_messagestream'));
+        $mform->setDefault('enableai', 1); // Default of "no"
+        $mform->setType('enableai', PARAM_BOOL);
+        $mform->addHelpButton('enableai', 'adminenableai', 'mod_messagestream');
+
+
         $mform->addElement('textarea', 'promptrefinement', get_string('promptrefinement', 'mod_messagestream'), array('rows' => 10, 'cols' => 60));
         $mform->setType('promptrefinement', PARAM_TEXT);
+        $mform->hideif('promptrefinement', 'enableai');
 
         $mform->addElement('text', 'points', get_string('points', 'mod_messagestream'));
         $mform->setType('points', PARAM_INT);
