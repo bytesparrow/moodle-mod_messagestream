@@ -24,7 +24,7 @@ class mod_messagestream_mod_form extends moodleform_mod {
     $aicourses = get_messagestream_ai_activated_in_courses();
     if (in_array($courseid, $aicourses)) {
       $mform->addElement('advcheckbox', 'enableai', get_string('enableai', 'mod_messagestream'));
-      $mform->setDefault('enableai', 1); // Default of "no"
+      $mform->setDefault('enableai', 1); // Default of "yes"
       $mform->setType('enableai', PARAM_BOOL);
       $mform->addHelpButton('enableai', 'adminenableai', 'mod_messagestream');
 
