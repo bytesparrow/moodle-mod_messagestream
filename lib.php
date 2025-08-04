@@ -26,7 +26,7 @@ function messagestream_add_instance($data, $mform) {
   }
 
   // PromptRefinement als editor-Feld absichern
-  if (is_array($data->promptrefinement)) {
+  if (!empty($data->promptrefinement)) {
     $data->promptrefinement = $data->promptrefinement['text'];
   }
 
@@ -51,7 +51,7 @@ function messagestream_update_instance($data, $mform) {
     $data->introformat = $data->introeditor['format'];
   }
   //normal nicht nötigt, $data->promptrefinement ist bereits der Text
-  if (is_array($data->promptrefinement)) {
+  if (!empty($data->promptrefinement)) {
     $data->promptrefinement = $data->promptrefinement['text'];
   }
   

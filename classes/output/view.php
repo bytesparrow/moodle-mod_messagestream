@@ -37,7 +37,7 @@ class view implements renderable, templatable {
        if ($currenctcontext === null) {
            return "";
        }
-    $data->messagestreamhtml =  $service->renderStream($currenctcontext);
+    $data->messagestreamhtml =  $service->renderStream($currenctcontext, $enableai);
 
 
     $data->getpointslabel = get_string('getpoints', 'mod_messagestream');
