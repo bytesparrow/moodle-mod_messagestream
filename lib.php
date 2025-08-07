@@ -51,7 +51,7 @@ function messagestream_update_instance($data, $mform) {
     $data->introformat = $data->introeditor['format'];
   }
   //normal nicht nötigt, $data->promptrefinement ist bereits der Text
-  if (!empty($data->promptrefinement)) {
+  if (!empty($data->promptrefinement) && is_array($data->promptrefinement)) {
     $data->promptrefinement = $data->promptrefinement['text'];
   }
   
@@ -207,7 +207,7 @@ function messagestream_set_points_for_user(int $cmid, int $userid, $revoke_point
 
   // 1. Kursmodul prüfen und laden
   if (!$cm = get_coursemodule_from_id('messagestream', $cmid)) {
-    debugging("Modul-ID $cmid konnte nicht gefunden werden (mod_messagestream)", DEBUG_DEVELOPER);
+    #debugging("Modul-ID $cmid konnte nicht gefunden werden (mod_messagestream)", DEBUG_DEVELOPER);
     return false;
   }
 
