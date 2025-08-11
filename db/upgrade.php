@@ -49,9 +49,23 @@ function xmldb_messagestream_upgrade($oldversion) {
     }
     // Genai savepoint reached.
     upgrade_plugin_savepoint(true, 2025062402, 'mod', 'messagestream');
+    
   }
 
 
+  if ($oldversion < 2025062409) {
+    $table = new xmldb_table('messagestream');
+    // Now add a new database field.
+    $field = new xmldb_field('aidefaulton', XMLDB_TYPE_INTEGER, '1', null, true, null, 0, 'enableai');
+
+    // Conditionally launch add field qformat.
+    if (!$dbman->field_exists($table, $field)) {
+      $dbman->add_field($table, $field);
+    }
+    // Aidefaulton savepoint reached.
+    upgrade_plugin_savepoint(true, 2025062409, 'mod', 'messagestream');
+    
+  }
 
 
   return true;

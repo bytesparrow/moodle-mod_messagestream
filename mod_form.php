@@ -28,6 +28,12 @@ class mod_messagestream_mod_form extends moodleform_mod {
       $mform->setType('enableai', PARAM_BOOL);
       $mform->addHelpButton('enableai', 'adminenableai', 'mod_messagestream');
 
+      $mform->addElement('advcheckbox', 'aidefaulton', get_string('adminaidefaulton', 'mod_messagestream'));
+      $mform->setDefault('aidefaulton', 1); // Default of "yes"
+      $mform->setType('aidefaulton', PARAM_BOOL);
+      $mform->addHelpButton('aidefaulton', 'adminaidefaulton', 'mod_messagestream');
+      $mform->hideif('aidefaulton', 'enableai');
+
       $mform->addElement('textarea', 'promptrefinement', get_string('promptrefinement', 'mod_messagestream'), array('rows' => 10, 'cols' => 60));
       $mform->setType('promptrefinement', PARAM_TEXT);
       $mform->hideif('promptrefinement', 'enableai');
@@ -35,6 +41,8 @@ class mod_messagestream_mod_form extends moodleform_mod {
     else {
       $mform->addElement('hidden', 'enableai');
       $mform->setDefault('enableai', 0); // "no"
+      $mform->addElement('hidden', 'aidefaulton');
+      $mform->setDefault('aidefaulton', "");
       $mform->addElement('hidden', 'promptrefinement');
       $mform->setDefault('promptrefinement', "");
     }

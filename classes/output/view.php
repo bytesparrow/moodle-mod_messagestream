@@ -28,16 +28,21 @@ class view implements renderable, templatable {
     $data->formaction = new \moodle_url('/mod/messagestream/view.php', ['id' => $this->messagestream->coursemodule]);
     $data->coursemodule = $this->messagestream->coursemodule;
     $data->sesskey = sesskey();
-    
-    $enableai = (bool)$this->messagestream->enableai;
 
+    $enableai = (bool) $this->messagestream->enableai;
+    $aidefaulton = (bool) $this->messagestream->aidefaulton;
     // Use StreamService to get context and render the stream
-       $service = new \local_nmstream\StreamService();
-       $currenctcontext = $service->getStreamRootContext();
-       if ($currenctcontext === null) {
-           return "";
-       }
-    $data->messagestreamhtml =  $service->renderStream($currenctcontext, $enableai);
+    $service = new \local_nmstream\StreamService();
+    $currenctcontext = $service->getStreamRootContext();
+    if ($currenctcontext === null) {
+      return "";
+    }
+
+    $streamoptions = array(
+      'enableai' => $enableai,
+      'default_ai' => $aidefaulton
+    );
+    $data->messagestreamhtml = $service->renderStream($currenctcontext, $streamoptions);
 
 
     $data->getpointslabel = get_string('getpoints', 'mod_messagestream');
