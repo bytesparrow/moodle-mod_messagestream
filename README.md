@@ -1,6 +1,7 @@
 # 📡 Messagestream Activity (mod_messagestream) for Moodle
 
-**Messagestream Activity** ist ein benutzerdefiniertes Moodle-Aktivitätsmodul, das in enger Zusammenarbeit mit dem Plugin [`local_nm_stream`](https://github.com/dein-repo/local_nm_stream) arbeitet. Es stellt eine einfache Aktivität bereit, bei der Teilnehmer*innen durch einen Buttonklick Punkte erhalten können. Das Plugin eignet sich ideal zur Anbindung an automatische Feedback- oder Prompt-Refinement-Prozesse.
+**Messagestream Activity** ist ein benutzerdefiniertes Moodle-Aktivitätsmodul, das das Plugin [`local_nmstream`](https://github.com/n-multimedia/local_nmstream) voraussetzt. Es stellt eine  Aktivität bereit, das das Stream-Plugin nutzt um einen Nachrichtenstream zu rendern. Das Plugin eignet sich ideal für Diskussionsprozesse.
+In einem Alpha-Stadium befindet sich ein KI-Feature. Hierbei antwortet (auf Wunsch) eine KI auf Beiträge.
 
 ---
 
@@ -8,7 +9,9 @@
 
 - Zwei konfigurierbare Felder für Lehrende:
   - **Beschreibung** (wird angezeigt)
-  - **Prompt Refinement** (versteckt, für spätere Auswertung)
+  - **KI aktivieren** (aktiviert das KI-Feature)
+  - **"KI verwenden" voreingestellt** (aktiviert bei neu verfassten Beiträge automatisch das KI-Feature)
+  - **Prompt Refinement** (versteckt, zur Anpassung des Prompts an die KI)
 - Punktezuteilung an Teilnehmer per Buttonklick
 - Automatische Integration ins Gradebook
 - Unterstützung für:
