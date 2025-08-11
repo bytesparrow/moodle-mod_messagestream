@@ -29,13 +29,11 @@ class observer {
     $courseid = $event->courseid;
 
     $timecreated = $event->timecreated;
+    $service = new \local_nmstream\StreamService();
+    $numentriesforuser = $service->getUserCommentCount($userid, $contextid);
 
-    return messagestream_set_points_for_user($contextid, $userid, true);
-    #  return;
-    #  \messagestream_award_points_for_user($contextid, $userid);
-    // Do something – for example, log or update something
-    #  var_dump("local_nmstream received comment_deleted event for user $userid and stream $messagestreamid in Context (cmid) $contextid in course $courseid at  $timecreated", DEBUG_DEVELOPER);
-    # exit;
+    //delete points if no entries left
+    return $numentriesforuser > 0 ? true : messagestream_set_points_for_user($contextid, $userid, true);
   }
 
 }
