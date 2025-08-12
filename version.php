@@ -7,7 +7,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_messagestream';
-$plugin->version = 2025062410;
+$plugin->version = 2025062411;
 $plugin->requires = 2022041900;
 $plugin->cron = 0;
 $plugin->maturity = MATURITY_STABLE;

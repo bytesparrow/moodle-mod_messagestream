@@ -40,7 +40,7 @@ class view implements renderable, templatable {
 
     $streamoptions = array(
       'enableai' => $enableai,
-      'default_ai' => $aidefaulton
+      'default_ai' => $aidefaulton && $enableai
     );
     $data->messagestreamhtml = $service->renderStream($currenctcontext, $streamoptions);
 
