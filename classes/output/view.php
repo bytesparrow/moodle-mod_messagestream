@@ -9,6 +9,8 @@ use stdClass;
 
 class view implements renderable, templatable {
 
+  static $refinement_intro = "\n\n### SONSTIGE FOKUSSIERUNG / VERFEINERUNG \n\n";
+
   /** @var \stdClass The stream instance */
   protected $messagestream;
 
@@ -42,6 +44,7 @@ class view implements renderable, templatable {
       'enableai' => $enableai,
       'default_ai' => $aidefaulton && $enableai
     );
+    $streamoptions["promptOverride"] = "{{ DefaultSystemPrompt }}".self::$refinement_intro.$this->messagestream->promptrefinement;
     $data->messagestreamhtml = $service->renderStream($currenctcontext, $streamoptions);
 
 
