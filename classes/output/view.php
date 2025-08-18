@@ -27,9 +27,6 @@ class view implements renderable, templatable {
     $data->name = format_string($this->messagestream->name);
     $data->description = format_text($this->messagestream->intro, $this->messagestream->introformat, ['context' => $this->context]);
     $data->points = $this->messagestream->points;
-    $data->formaction = new \moodle_url('/mod/messagestream/view.php', ['id' => $this->messagestream->coursemodule]);
-    $data->coursemodule = $this->messagestream->coursemodule;
-    $data->sesskey = sesskey();
 
     $enableai = (bool) $this->messagestream->enableai;
     $aidefaulton = (bool) $this->messagestream->aidefaulton;

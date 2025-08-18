@@ -22,21 +22,7 @@ require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 $messagestream->coursemodule = $cm->id;
 
-$action = optional_param('action', '', PARAM_ALPHA);
 
-//TODO temporary to check the point-feature
-if (optional_param('action', '', PARAM_ALPHA) === 'submit' && confirm_sesskey()) {
-  require_login($course, false, $cm);
-
-  messagestream_update_grades($messagestream, $USER->id);
-  
-  redirect(
-    new moodle_url('/mod/messagestream/view.php', ['id' => $cm->id]),
-    get_string('pointsawarded', 'mod_messagestream'),
-    null,
-    \core\output\notification::NOTIFY_SUCCESS
-  );
-}
 $PAGE->set_url(new moodle_url('/mod/messagestream/view.php', ['id' => $id]));
 $PAGE->set_title($messagestream->name);
 $PAGE->set_heading($course->fullname);

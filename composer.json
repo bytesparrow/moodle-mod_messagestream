@@ -4,7 +4,7 @@
     "type": "moodle-mod",
     "keywords": ["moodle", "communication"],
     "license": "GPLv3",
-    "version": "v2.0-alpha11",
+    "version": "v2.0-alpha12",
     "authors": [
         {
             "name": "Bernhard Strehl",
