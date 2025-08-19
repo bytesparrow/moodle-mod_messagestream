@@ -25,11 +25,6 @@ function messagestream_add_instance($data, $mform) {
     $data->introformat = $data->introeditor['format'];
   }
 
-  // PromptRefinement als editor-Feld absichern
-  if (!empty($data->promptrefinement)) {
-    $data->promptrefinement = $data->promptrefinement['text'];
-  }
-
   return $DB->insert_record('messagestream', $data);
 }
 
@@ -235,17 +230,6 @@ function messagestream_set_points_for_user(int $cmid, int $userid, $revoke_point
   return true;
 }
 
-/**
- * Handles user grading when the button is clicked.
- * //TODO only temporary for tests
- * @param stdClass $messagestream
- * @param int $userid
- * @return void
- */
-function messagestream_submit_activity($messagestream, $userid) {
-  // Trage die Punkte sofort ins Gradebook ein
-  messagestream_grade_item_update($messagestream, $userid);
-}
 
 /**
   Wenn du das Icon auch bei „Aktivität oder Material anlegen“ schöner darstellen willst, ergänze in deiner lib.php diese Funktion:
