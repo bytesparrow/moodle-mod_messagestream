@@ -21,8 +21,15 @@ class mod_messagestream_mod_form extends moodleform_mod {
     $this->standard_intro_elements();
 
 
+      $mform->addElement('advcheckbox', 'privacyactive', get_string('adminprivacyactive', 'mod_messagestream'));
+      $mform->setDefault('privacyactive', 1); // Default of "yes"
+      $mform->setType('privacyactive', PARAM_BOOL);
+      $mform->addHelpButton('privacyactive', 'adminprivacyactive', 'mod_messagestream');
+      
     $aicourses = get_messagestream_ai_activated_in_courses();
     if (in_array($courseid, $aicourses)) {
+           
+      
       $mform->addElement('advcheckbox', 'enableai', get_string('enableai', 'mod_messagestream'));
       $mform->setDefault('enableai', 1); // Default of "yes"
       $mform->setType('enableai', PARAM_BOOL);

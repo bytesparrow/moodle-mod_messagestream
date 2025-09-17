@@ -24,7 +24,6 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-
 /**
  * Execute mod_messagestream upgrade from the given old version.
  *
@@ -49,7 +48,6 @@ function xmldb_messagestream_upgrade($oldversion) {
     }
     // Genai savepoint reached.
     upgrade_plugin_savepoint(true, 2025062402, 'mod', 'messagestream');
-    
   }
 
 
@@ -64,8 +62,20 @@ function xmldb_messagestream_upgrade($oldversion) {
     }
     // Aidefaulton savepoint reached.
     upgrade_plugin_savepoint(true, 2025062409, 'mod', 'messagestream');
-    
   }
+  if ($oldversion < 2025062416) {
+    $table = new xmldb_table('messagestream');
+    // Now add a new database field.
+    $field = new xmldb_field('privacyactive', XMLDB_TYPE_INTEGER, '1', null, true, null, 0, 'introformat');
+
+    // Conditionally launch add field qformat.
+    if (!$dbman->field_exists($table, $field)) {
+      $dbman->add_field($table, $field);
+    }
+    // Privacyactive savepoint reached.
+    upgrade_plugin_savepoint(true, 2025062416, 'mod', 'messagestream');
+  }
+
 
 
   return true;

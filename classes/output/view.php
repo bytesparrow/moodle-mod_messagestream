@@ -27,7 +27,7 @@ class view implements renderable, templatable {
     $data->name = format_string($this->messagestream->name);
     $data->description = format_text($this->messagestream->intro, $this->messagestream->introformat, ['context' => $this->context]);
     $data->points = $this->messagestream->points;
-
+    $privacyactive = (bool) $this->messagestream->privacyactive;
     $enableai = (bool) $this->messagestream->enableai;
     $aidefaulton = (bool) $this->messagestream->aidefaulton;
     // Use StreamService to get context and render the stream
@@ -38,10 +38,11 @@ class view implements renderable, templatable {
     }
 
     $streamoptions = array(
+      'enableprivacy' => $privacyactive,
       'enableai' => $enableai,
       'default_ai' => $aidefaulton && $enableai
     );
-    $streamoptions["promptOverride"] = "{{ DefaultSystemPrompt }}".self::$refinement_intro.$this->messagestream->promptrefinement;
+    $streamoptions["promptOverride"] = "{{ DefaultSystemPrompt }}" . self::$refinement_intro . $this->messagestream->promptrefinement;
     $data->messagestreamhtml = $service->renderStream($currenctcontext, $streamoptions);
 
 
