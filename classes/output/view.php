@@ -42,7 +42,7 @@ class view implements renderable, templatable {
       'enableai' => $enableai,
       'default_ai' => $aidefaulton && $enableai
     );
-    $streamoptions["promptOverride"] = "{{ DefaultSystemPrompt }}" . self::$refinement_intro . (str_replace('\'', '"', htmlspecialchars_decode($this->messagestream->promptrefinement)));
+    $streamoptions["promptOverride"] = "{{ DefaultSystemPrompt }}" . ( !empty($this->messagestream->promptrefinement) ? (self::$refinement_intro . (str_replace('\'', '"', htmlspecialchars_decode($this->messagestream->promptrefinement)))) : '');
     $data->messagestreamhtml = $service->renderStream($currenctcontext, $streamoptions);
 
 
