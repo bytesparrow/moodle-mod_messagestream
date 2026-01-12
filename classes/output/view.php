@@ -45,6 +45,9 @@ class view implements renderable, templatable {
     $streamoptions["promptOverride"] = "{{ DefaultSystemPrompt }}" . ( !empty($this->messagestream->promptrefinement) ? (self::$refinement_intro . (str_replace('\'', '"', htmlspecialchars_decode($this->messagestream->promptrefinement)))) : '');
     $data->messagestreamhtml = $service->renderStream($currenctcontext, $streamoptions);
 
+    //todo use real values
+    $data->count_posts = 99;
+    $data->count_comments = 12;
 
     $data->getpointslabel = get_string('getpoints', 'mod_messagestream');
     return $data;
