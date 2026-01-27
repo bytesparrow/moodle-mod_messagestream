@@ -42,12 +42,21 @@ class view implements renderable, templatable {
       'enableai' => $enableai,
       'default_ai' => $aidefaulton && $enableai
     );
-    $streamoptions["promptOverride"] = "{{ DefaultSystemPrompt }}" . ( !empty($this->messagestream->promptrefinement) ? (self::$refinement_intro . (str_replace('\'', '"', htmlspecialchars_decode($this->messagestream->promptrefinement)))) : '');
+    $streamoptions["promptOverride"] = "{{ DefaultSystemPrompt }}" . (!empty($this->messagestream->promptrefinement) ? (self::$refinement_intro . (str_replace('\'', '"', htmlspecialchars_decode($this->messagestream->promptrefinement)))) : '');
     $data->messagestreamhtml = $service->renderStream($currenctcontext, $streamoptions);
 
-    //todo use real values
-    $data->count_posts = 99;
-    $data->count_comments = 12;
+
+    $controller = new \local_nmstream\StreamController();
+    $counts = $controller->getTotalCounts($this->context->instanceid, 'messagestream', true);
+
+    if ($enableai) {
+      $numcomments = $counts['comments'] - $counts['ai_comments'];
+      $data->string_stats = get_string('statinfo_with_ai', 'mod_messagestream', ['count_posts' => $counts['posts'], 'count_comments' => $numcomments,  'count_ai_comments' => $counts['ai_comments']]); 
+    }
+    else {
+         $data->string_stats = get_string('statinfo', 'mod_messagestream', ['count_comments' =>  $counts['comments'], 'count_posts' => $counts['posts']]);
+    }
+
 
     $data->getpointslabel = get_string('getpoints', 'mod_messagestream');
     return $data;

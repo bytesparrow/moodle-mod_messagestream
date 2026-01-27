@@ -29,3 +29,4 @@ $string['adminpoints_help'] = 'When a learner posts a contribution, they can rec
 $string['aienabledcourses'] = 'AI enabled in courses';
 $string['aienabledcourses_desc'] = 'Comma-separated list of course IDs where the Message Stream AI feature is enabled. Example: 2,5,8';
 $string['statinfo'] = '{$a->count_posts} posts & {$a->count_comments} comments';
+$string['statinfo_with_ai'] = '{$a->count_posts} posts, {$a->count_comments} comments & {$a->count_ai_comments} AI-generated answers';

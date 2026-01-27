@@ -28,4 +28,5 @@ $string['adminpoints'] = 'Vergebene Punkte';
 $string['adminpoints_help'] = 'Wenn ein Lernender einen Beitrag postet, kann die Person hierfür (einmalig) Punkte erhalten. Wieviele, geben Sie hier an.';
 $string['aienabledcourses'] = 'KI in Kursen aktiviert';
 $string['aienabledcourses_desc'] = 'Geben Sie eine kommaseparierte Liste von Kurs-IDs an, in denen die KI des Message Stream Plugin aktiviert sein soll. Beispiel: 2,5,8';
-$string['statinfo'] = 'Bisher {$a->count_posts} Beiträge & {$a->count_comments} Kommentare';
+$string['statinfo'] = 'Bisher {$a->count_posts} Beiträge, {$a->count_comments} Kommentare & {$a->count_ai_comments} KI-Antworten';
+$string['statinfo_with_ai'] = 'Bisher {$a->count_posts} Beiträge, {$a->count_comments} Kommentare & {$a->count_ai_comments} KI-Antworten';
