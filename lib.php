@@ -25,6 +25,8 @@ function messagestream_add_instance($data, $mform) {
     $data->introformat = $data->introeditor['format'];
   }
 
+  messagestream_normalize_persona_fields($data);
+
   return $DB->insert_record('messagestream', $data);
 }
 
@@ -49,7 +51,9 @@ function messagestream_update_instance($data, $mform) {
   if (!empty($data->promptrefinement) && is_array($data->promptrefinement)) {
     $data->promptrefinement = $data->promptrefinement['text'];
   }
-  
+
+  messagestream_normalize_persona_fields($data);
+
  $succ = $DB->update_record('messagestream', $data);
 
   // Ergänze coursemodule ID (wird z. B. für context benötigt).
@@ -85,6 +89,22 @@ function messagestream_delete_instance($id) {
  * @param string $feature
  * @return mixed
  */
+/**
+ * Normalise persona_id / persona_overrides_json for DB storage.
+ *
+ * @param \stdClass $data
+ */
+function messagestream_normalize_persona_fields(\stdClass $data): void {
+  if (isset($data->persona_id)) {
+    $pid = (int) $data->persona_id;
+    $data->persona_id = $pid > 0 ? $pid : null;
+  }
+  if (isset($data->persona_overrides_json)) {
+    $t = trim((string) $data->persona_overrides_json);
+    $data->persona_overrides_json = ($t === '') ? null : $t;
+  }
+}
+
 function messagestream_supports($feature) {
   switch ($feature) {
     case FEATURE_GRADE_HAS_GRADE: return true;
