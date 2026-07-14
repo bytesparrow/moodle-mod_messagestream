@@ -27,7 +27,9 @@ class view implements renderable, templatable {
 
     $data = new stdClass();
     $data->name = format_string($this->messagestream->name);
-    $data->description = format_text($this->messagestream->intro, $this->messagestream->introformat, ['context' => $this->context]);
+    //fixing error "Before calling format_text(), the content must be processed with file_rewrite_pluginfile_urls() "
+    $description = file_rewrite_pluginfile_urls($this->messagestream->intro, 'pluginfile.php',  $this->context->id, 'mod_messagestream', 'activity', $this->messagestream->id);
+    $data->description = format_text($description, $this->messagestream->introformat, ['context' => $this->context]);
     $data->points = $this->messagestream->points;
     $privacyactive = (bool) $this->messagestream->privacyactive;
     $enableai = (bool) $this->messagestream->enableai;
