@@ -25,6 +25,8 @@ class view implements renderable, templatable {
 
   public function export_for_template(renderer_base $output): stdClass {
 
+    $viewmode = optional_param('view', 'stream', PARAM_ALPHA);
+
     $data = new stdClass();
     $data->name = format_string($this->messagestream->name);
     //fixing error "Before calling format_text(), the content must be processed with file_rewrite_pluginfile_urls() "
@@ -37,6 +39,7 @@ class view implements renderable, templatable {
     // Use StreamService to get context and render the stream
     $service = new \local_nmstream\StreamService();
     $currenctcontext = $service->getStreamRootContext();
+    $moodlecontext =  \context_module::instance($this->messagestream->coursemodule);
     if ($currenctcontext === null) {
       return "";
     }
@@ -55,7 +58,41 @@ class view implements renderable, templatable {
         'avatarUrl' => $coach['avatar_url'],
         'avatarEmoji' => $coach['avatar_emoji'],
     ];
-    $data->messagestreamhtml = $service->renderStream($currenctcontext, $streamoptions);
+    
+    
+
+    //Buttons
+    $caneditcoach = has_capability('moodle/course:manageactivities', $moodlecontext);
+     
+     
+    $urlstream = (new \moodle_url('/mod/messagestream/view.php', ['id' => $this->messagestream->coursemodule, 'view' => 'stream']))->out(false);
+    $urlcoach = (new \moodle_url('/mod/messagestream/view.php', ['id' => $this->messagestream->coursemodule, 'view' => 'coach']))->out(false);
+    $buttons = [];
+    $buttons[] = array("url" => $urlstream, "text" => get_string('viewtab_stream', 'mod_messagestream'), 'class' => 'btn btn-link' . ($viewmode === 'stream' ? ' fw-bold' : '') );
+    if($caneditcoach && $enableai)
+    {
+      $buttons[] = array("url" => $urlcoach, "text" => get_string('coachsettings:tab', 'mod_messagestream'), 'class' => 'btn btn-link' . ($viewmode === 'coach' ? ' fw-bold' : '') );
+    }
+    $data->buttons = $buttons;
+    
+    if ($viewmode === 'coach') {
+      if (!$caneditcoach) {
+
+        $data->mainhtml = \core\notification::error(get_string('nopermissions', 'error'));
+      }
+      else {
+        //todo this is ugly AF
+        ob_start();
+        $cmid = $this->messagestream->coursemodule;
+        $messagestream = $this->messagestream;
+        require dirname(dirname(__DIR__)) . '/views/coach_settings.php';
+        $html = ob_get_clean();
+        $data->mainhtml = $html;
+      }
+    }
+    else {
+      $data->mainhtml = $service->renderStream($currenctcontext, $streamoptions);
+    }
 
     $controller = new \local_nmstream\StreamController();
     $counts = $controller->getTotalCounts($this->context->instanceid, 'messagestream', true);

@@ -10,8 +10,7 @@
 if (!defined('NO_DEBUG_DISPLAY')) {
     define('NO_DEBUG_DISPLAY', true);
 }
-
-require_once(__DIR__ . '/../../config.php');
+require $_SERVER ["DOCUMENT_ROOT"] . DIRECTORY_SEPARATOR . 'config.php';
 
 require_login();
 
