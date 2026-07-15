@@ -11,7 +11,8 @@ class backup_messagestream_activity_structure_step extends backup_activity_struc
 
         // Define each element to be processed
         $messagestream = new backup_nested_element('messagestream', ['id'], [
-            'name', 'intro', 'introformat', 'promptrefinement', 'points', 'timecreated', 'timemodified'
+            'name', 'intro', 'introformat', 'promptrefinement', 'persona_id', 'persona_overrides_json',
+            'points', 'timecreated', 'timemodified',
         ]);
 
         // Set sources

@@ -78,5 +78,21 @@ function xmldb_messagestream_upgrade($oldversion) {
 
 
 
+  if ($oldversion < 2026050820) {
+    $table = new xmldb_table('messagestream');
+
+    $field = new xmldb_field('persona_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'promptrefinement');
+    if (!$dbman->field_exists($table, $field)) {
+      $dbman->add_field($table, $field);
+    }
+
+    $field = new xmldb_field('persona_overrides_json', XMLDB_TYPE_TEXT, null, null, null, null, null, 'persona_id');
+    if (!$dbman->field_exists($table, $field)) {
+      $dbman->add_field($table, $field);
+    }
+
+    upgrade_plugin_savepoint(true, 2026050820, 'mod', 'messagestream');
+  }
+
   return true;
 }

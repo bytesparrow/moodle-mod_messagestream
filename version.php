@@ -7,12 +7,12 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_messagestream';
-$plugin->version = 2025062421;
+$plugin->version = 2026071401;
 $plugin->requires = 2022041900;
 $plugin->cron = 0;
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = '2.0';
+$plugin->release = '3.0';
 
 $plugin->dependencies = [
-    'local_nmstream' => 2025052309 // oder die exakte Version von local_nmstream
+    'local_nmstream' => 2026051000,
 ];

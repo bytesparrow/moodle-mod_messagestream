@@ -2,6 +2,7 @@
 
 namespace mod_messagestream\output;
 
+use local_nmstream\local\persona\PersonaDisplayResolver;
 use renderable;
 use templatable;
 use renderer_base;
@@ -23,9 +24,12 @@ class view implements renderable, templatable {
   }
 
   public function export_for_template(renderer_base $output): stdClass {
+
     $data = new stdClass();
     $data->name = format_string($this->messagestream->name);
-    $data->description = format_text($this->messagestream->intro, $this->messagestream->introformat, ['context' => $this->context]);
+    //fixing error "Before calling format_text(), the content must be processed with file_rewrite_pluginfile_urls() "
+    $description = file_rewrite_pluginfile_urls($this->messagestream->intro, 'pluginfile.php',  $this->context->id, 'mod_messagestream', 'activity', $this->messagestream->id);
+    $data->description = format_text($description, $this->messagestream->introformat, ['context' => $this->context]);
     $data->points = $this->messagestream->points;
     $privacyactive = (bool) $this->messagestream->privacyactive;
     $enableai = (bool) $this->messagestream->enableai;
@@ -42,9 +46,16 @@ class view implements renderable, templatable {
       'enableai' => $enableai,
       'default_ai' => $aidefaulton && $enableai
     );
-    $streamoptions["promptOverride"] = "{{ DefaultSystemPrompt }}" . (!empty($this->messagestream->promptrefinement) ? (self::$refinement_intro . (str_replace('\'', '"', htmlspecialchars_decode($this->messagestream->promptrefinement)))) : '');
+    $streamoptions["promptOverride"] = (!empty($this->messagestream->promptrefinement)
+      ? (self::$refinement_intro . (str_replace('\'', '"', htmlspecialchars_decode($this->messagestream->promptrefinement))))
+      : '');
+    $coach = PersonaDisplayResolver::resolve_for_messagestream_instance((int) $this->messagestream->id);
+    $streamoptions['aiCoach'] = [
+        'displayName' => $coach['display_name'],
+        'avatarUrl' => $coach['avatar_url'],
+        'avatarEmoji' => $coach['avatar_emoji'],
+    ];
     $data->messagestreamhtml = $service->renderStream($currenctcontext, $streamoptions);
-
 
     $controller = new \local_nmstream\StreamController();
     $counts = $controller->getTotalCounts($this->context->instanceid, 'messagestream', true);
