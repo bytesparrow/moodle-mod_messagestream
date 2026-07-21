@@ -13,6 +13,12 @@ class mod_messagestream_mod_form extends moodleform_mod {
     global $COURSE, $DB;
     $courseid = $COURSE->id;
     $mform = $this->_form;
+    if (!empty($this->_cm) && !empty($this->_cm->id)) {
+      $cmid = $this->_cm->id;
+    }
+    else {
+      $cmid = 0; // The activity hasn't been created/saved yet
+    }
 
     $mform->addElement('text', 'name', get_string('messagestreamname', 'mod_messagestream'), ['size' => '64']);
     $mform->setType('name', PARAM_TEXT);
@@ -40,10 +46,7 @@ class mod_messagestream_mod_form extends moodleform_mod {
       $mform->setType('aidefaulton', PARAM_BOOL);
       $mform->addHelpButton('aidefaulton', 'adminaidefaulton', 'mod_messagestream');
       $mform->hideif('aidefaulton', 'enableai');
-
-      $mform->addElement('textarea', 'promptrefinement', get_string('promptrefinement', 'mod_messagestream'), array('rows' => 10, 'cols' => 60));
-      $mform->setType('promptrefinement', PARAM_TEXT);
-      $mform->hideif('promptrefinement', 'enableai');
+      
 
       $personaoptions = [0 => get_string('persona_none', 'mod_messagestream')];
       if ($DB->get_manager()->table_exists('local_nmstream_personas')) {
@@ -58,6 +61,34 @@ class mod_messagestream_mod_form extends moodleform_mod {
       $mform->setType('persona_id', PARAM_INT);
       $mform->addHelpButton('persona_id', 'persona_id', 'mod_messagestream');
       $mform->hideif('persona_id', 'enableai');
+      
+      
+      if ($cmid) {
+        $url = new moodle_url('/mod/messagestream/view.php', [
+          'id' => $cmid,
+          'view' => 'coach',
+        ]);
+
+        $html = html_writer::link(
+            $url,
+            get_string('coachsettings:configure_persona', 'mod_messagestream')
+        );
+
+        #$mform->addElement('html', $html);
+        $mform->addElement(
+          'static',
+          'configurepersonalink',
+          '',
+          $html
+        );
+        $mform->hideif('configurepersonalink', 'enableai');
+      }
+
+      
+      $mform->addElement('textarea', 'promptrefinement', get_string('promptrefinement', 'mod_messagestream'), array('rows' => 10, 'cols' => 60));
+      $mform->setType('promptrefinement', PARAM_TEXT);
+      $mform->hideif('promptrefinement', 'enableai');
+
 
       // Overrides are edited on the activity “Coach settings” tab; keep stored JSON on save.
       $mform->addElement('hidden', 'persona_overrides_json');

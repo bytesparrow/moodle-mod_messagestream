@@ -61,19 +61,8 @@ class view implements renderable, templatable {
     
     
 
-    //Buttons
+    //security
     $caneditcoach = has_capability('moodle/course:manageactivities', $moodlecontext);
-     
-     
-    $urlstream = (new \moodle_url('/mod/messagestream/view.php', ['id' => $this->messagestream->coursemodule, 'view' => 'stream']))->out(false);
-    $urlcoach = (new \moodle_url('/mod/messagestream/view.php', ['id' => $this->messagestream->coursemodule, 'view' => 'coach']))->out(false);
-    $buttons = [];
-    $buttons[] = array("url" => $urlstream, "text" => get_string('viewtab_stream', 'mod_messagestream'), 'class' => 'btn btn-link' . ($viewmode === 'stream' ? ' fw-bold' : '') );
-    if($caneditcoach && $enableai)
-    {
-      $buttons[] = array("url" => $urlcoach, "text" => get_string('coachsettings:tab', 'mod_messagestream'), 'class' => 'btn btn-link' . ($viewmode === 'coach' ? ' fw-bold' : '') );
-    }
-    $data->buttons = $buttons;
     
     if ($viewmode === 'coach') {
       if (!$caneditcoach) {
