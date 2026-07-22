@@ -90,7 +90,7 @@ class mod_messagestream_mod_form extends moodleform_mod {
       $mform->hideif('promptrefinement', 'enableai');
 
 
-      // Overrides are edited on the activity “Coach settings” tab; keep stored JSON on save.
+      // Overrides are edited on the activity “Persona” tab; keep stored JSON on save.
       $mform->addElement('hidden', 'persona_overrides_json');
       $mform->setType('persona_overrides_json', PARAM_RAW);
       $mform->hideif('persona_overrides_json', 'enableai');

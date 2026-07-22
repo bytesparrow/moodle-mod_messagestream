@@ -1,6 +1,6 @@
 <?php
 /**
- * Coach settings — persona selection + per-activity field overrides (NMStream personas).
+ * Persona settings — persona selection + per-activity field overrides (NMStream personas).
  *
  * Expected variables: $messagestream, $cm, $course, $context, $cmid (set by view.php).
  *
@@ -23,6 +23,7 @@ if ($DB->get_manager()->table_exists('local_nmstream_personas')) {
 }
 
 $baseconfig = [];
+$personaservice = new \local_nmstream\local\persona\PersonaService();
 if ($currentpersonaid) {
     $personarec = $DB->get_record('local_nmstream_personas', ['id' => $currentpersonaid]);
     if ($personarec) {
@@ -30,8 +31,17 @@ if ($currentpersonaid) {
         if (!isset($baseconfig['name']) && !empty($personarec->name)) {
             $baseconfig['name'] = $personarec->name;
         }
+        $baseconfig['task'] = \local_nmstream\local\persona\PersonaCompiler::resolve_task($baseconfig['task'] ?? '');
+        if (!empty($personarec->solution_hints_encrypted)) {
+            $baseconfig['solution_hints'] = $personaservice->decrypt_hints($personarec->solution_hints_encrypted);
+        }
     }
 }
+// Effective contract defaults (persona → site → bundled) for grayed-out preview when not overridden.
+$contractdefaults = \local_nmstream\local\persona\PersonaCompiler::resolve_contract_parts($baseconfig);
+$baseconfig['output_schema'] = $contractdefaults['output_schema'];
+$baseconfig['citation_rules'] = $contractdefaults['citation_rules'];
+$baseconfig['validation_checklist'] = $contractdefaults['validation_checklist'];
 
 /**
  * One override row (checkbox + input).
@@ -40,6 +50,9 @@ if ($currentpersonaid) {
  * @param string $label Display label
  * @param string $type text|textarea|select|file
  * @param array $options For select: value => label
+ * @param array $overrides Current activity overrides
+ * @param array $base Persona/site default values (shown grayed when not overridden)
+ * @param int $textarearows Rows for textarea fields
  */
 function mod_messagestream_coach_override_row(
     string $key,
@@ -47,7 +60,8 @@ function mod_messagestream_coach_override_row(
     string $type,
     array $options,
     array $overrides,
-    array $base
+    array $base,
+    int $textarearows = 3
 ): void {
     $checked = array_key_exists($key, $overrides);
     $basevalue = $base[$key] ?? '';
@@ -62,8 +76,9 @@ function mod_messagestream_coach_override_row(
     $placeholder = $basevalue;
     $disabled = $checked ? '' : 'disabled';
     $chk = $checked ? 'checked' : '';
+    $defattr = htmlspecialchars((string) $basevalue, ENT_QUOTES);
     ?>
-    <tr class="override-row" data-key="<?php echo htmlspecialchars($key); ?>">
+    <tr class="override-row" data-key="<?php echo htmlspecialchars($key); ?>" data-default="<?php echo $defattr; ?>">
         <td class="override-toggle">
             <input type="checkbox" class="override-check" data-key="<?php echo htmlspecialchars($key); ?>"
                    <?php echo $chk; ?> title="<?php echo get_string('coachsettings:override_activate', 'mod_messagestream'); ?>">
@@ -80,7 +95,7 @@ function mod_messagestream_coach_override_row(
             </select>
             <?php elseif ($type === 'textarea') : ?>
             <textarea name="override_<?php echo htmlspecialchars($key); ?>" class="override-field form-control form-control-sm"
-                      rows="3" placeholder="<?php echo htmlspecialchars((string) $placeholder); ?>"
+                      rows="<?php echo (int) $textarearows; ?>" placeholder="<?php echo htmlspecialchars((string) $placeholder); ?>"
                       <?php echo $disabled; ?>><?php echo htmlspecialchars((string) $value); ?></textarea>
             <?php elseif ($type === 'file') : ?>
             <div class="d-flex gap-2 flex-wrap">
@@ -136,18 +151,27 @@ $discussionmodes = [
     'always' => get_string('personas:discussion_always', 'local_nmstream'),
     'random' => get_string('personas:discussion_random', 'local_nmstream'),
 ];
+$interactionstyles = [
+    'balanced' => get_string('personas:interaction_balanced', 'local_nmstream'),
+    'socratic' => get_string('personas:interaction_socratic', 'local_nmstream'),
+    'direct' => get_string('personas:interaction_direct', 'local_nmstream'),
+    'devils_advocate' => get_string('personas:interaction_devils_advocate', 'local_nmstream'),
+    'coach_ideator' => get_string('personas:interaction_coach_ideator', 'local_nmstream'),
+];
 $closingtypes = [
     'motivating' => get_string('personas:closing_motivating', 'local_nmstream'),
     'humorous' => get_string('personas:closing_humorous', 'local_nmstream'),
     'feedback_thumbs' => get_string('personas:closing_thumbs', 'local_nmstream'),
     'cta' => get_string('personas:closing_cta', 'local_nmstream'),
+    'summary_structured' => get_string('personas:closing_summary_structured', 'local_nmstream'),
+    'custom' => get_string('personas:field_closing_custom', 'local_nmstream'),
 ];
 
 $ajaxurl = (new moodle_url('/mod/messagestream/ajax.php'))->out(false);
 ?>
 
 <div class="messagestream-coach-settings mt-3">
-    <h3><?php echo get_string('coachsettings:tab', 'mod_messagestream'); ?></h3>
+    <h3><?php echo get_string('personas:activity_settings_tab', 'local_nmstream'); ?></h3>
 
     <div id="coach-settings-status" class="mb-3" role="alert" aria-live="polite" style="display:none;"></div>
     <pre id="coach-settings-preview" class="small text-muted" style="display:none;white-space:pre-wrap;max-height:12rem;overflow:auto;border:1px solid #e5e7eb;border-radius:8px;padding:10px;background:#fafafa;"></pre>
@@ -193,33 +217,46 @@ $ajaxurl = (new moodle_url('/mod/messagestream/ajax.php'))->out(false);
                     </tr>
                 </thead>
                 <tbody>
-                <tr class="table-secondary"><td colspan="4"><strong><?php echo get_string('coachsettings:section_heading_style', 'mod_messagestream'); ?></strong></td></tr>
+                <tr class="table-secondary"><td colspan="4"><strong><?php echo get_string('personas:section_style', 'local_nmstream'); ?></strong></td></tr>
                 <?php
                 mod_messagestream_coach_override_row('name', get_string('personas:field_name', 'local_nmstream'), 'text', [], $currentoverrides, $baseconfig);
-                mod_messagestream_coach_override_row('role', get_string('personas:field_role', 'local_nmstream'), 'text', [], $currentoverrides, $baseconfig);
-                mod_messagestream_coach_override_row('audience', get_string('personas:field_audience', 'local_nmstream'), 'text', [], $currentoverrides, $baseconfig);
-                mod_messagestream_coach_override_row('tonality', get_string('personas:field_tonality', 'local_nmstream'), 'select', $tonalities, $currentoverrides, $baseconfig);
                 mod_messagestream_coach_override_row('salutation', get_string('personas:field_salutation', 'local_nmstream'), 'select', $salutations, $currentoverrides, $baseconfig);
+                mod_messagestream_coach_override_row('role', get_string('personas:field_role', 'local_nmstream'), 'text', [], $currentoverrides, $baseconfig);
+                mod_messagestream_coach_override_row('tonality', get_string('personas:field_tonality', 'local_nmstream'), 'select', $tonalities, $currentoverrides, $baseconfig);
                 mod_messagestream_coach_override_row('perspective', get_string('personas:field_perspective', 'local_nmstream'), 'select', $perspectives, $currentoverrides, $baseconfig);
-                mod_messagestream_coach_override_row('style_rules', get_string('personas:field_style_rules', 'local_nmstream'), 'textarea', [], $currentoverrides, $baseconfig);
                 mod_messagestream_coach_override_row('prohibited_phrases', get_string('personas:field_prohibited_phrases', 'local_nmstream'), 'textarea', [], $currentoverrides, $baseconfig);
+                mod_messagestream_coach_override_row('style_rules', get_string('personas:field_style_rules', 'local_nmstream'), 'textarea', [], $currentoverrides, $baseconfig);
                 mod_messagestream_coach_override_row('avatar', get_string('personas:field_avatar', 'local_nmstream'), 'file', [], $currentoverrides, $baseconfig);
                 ?>
-                <tr class="table-secondary"><td colspan="4"><strong><?php echo get_string('coachsettings:section_heading_feedback', 'mod_messagestream'); ?></strong></td></tr>
+                <tr class="table-secondary"><td colspan="4"><strong><?php echo get_string('personas:section_feedback', 'local_nmstream'); ?></strong></td></tr>
                 <?php
                 mod_messagestream_coach_override_row('prefix', get_string('personas:field_prefix', 'local_nmstream'), 'text', [], $currentoverrides, $baseconfig);
                 mod_messagestream_coach_override_row('structure', get_string('personas:field_structure', 'local_nmstream'), 'select', $structures, $currentoverrides, $baseconfig);
                 mod_messagestream_coach_override_row('max_length', get_string('personas:field_max_length', 'local_nmstream'), 'text', [], $currentoverrides, $baseconfig);
                 ?>
-                <tr class="table-secondary"><td colspan="4"><strong><?php echo get_string('coachsettings:section_heading_knowledge', 'mod_messagestream'); ?></strong></td></tr>
+                <tr class="table-secondary"><td colspan="4"><strong><?php echo get_string('personas:section_knowledge', 'local_nmstream'); ?></strong></td></tr>
                 <?php
-                mod_messagestream_coach_override_row('task', get_string('personas:field_task', 'local_nmstream'), 'textarea', [], $currentoverrides, $baseconfig);
                 mod_messagestream_coach_override_row('source_mode', get_string('personas:field_source_mode', 'local_nmstream'), 'select', $sourcemodes, $currentoverrides, $baseconfig);
+                mod_messagestream_coach_override_row('audience', get_string('personas:field_audience', 'local_nmstream'), 'text', [], $currentoverrides, $baseconfig);
                 ?>
-                <tr class="table-secondary"><td colspan="4"><strong><?php echo get_string('coachsettings:section_heading_interaction', 'mod_messagestream'); ?></strong></td></tr>
+                <tr class="table-secondary"><td colspan="4"><strong><?php echo get_string('personas:section_task', 'local_nmstream'); ?></strong></td></tr>
                 <?php
+                mod_messagestream_coach_override_row('task', get_string('personas:field_task', 'local_nmstream'), 'textarea', [], $currentoverrides, $baseconfig, 5);
+                mod_messagestream_coach_override_row('solution_hints', get_string('personas:field_solution_hints', 'local_nmstream'), 'textarea', [], $currentoverrides, $baseconfig, 5);
+                ?>
+                <tr class="table-secondary"><td colspan="4"><strong><?php echo get_string('personas:section_interaction', 'local_nmstream'); ?></strong></td></tr>
+                <?php
+                mod_messagestream_coach_override_row('interaction_style', get_string('personas:field_interaction_style', 'local_nmstream'), 'select', $interactionstyles, $currentoverrides, $baseconfig);
                 mod_messagestream_coach_override_row('discussion_mode', get_string('personas:field_discussion_mode', 'local_nmstream'), 'select', $discussionmodes, $currentoverrides, $baseconfig);
                 mod_messagestream_coach_override_row('closing_type', get_string('personas:field_closing_type', 'local_nmstream'), 'select', $closingtypes, $currentoverrides, $baseconfig);
+                mod_messagestream_coach_override_row('closing_custom_text', get_string('personas:field_closing_custom', 'local_nmstream'), 'textarea', [], $currentoverrides, $baseconfig);
+                ?>
+                <tr class="table-secondary"><td colspan="4"><strong><?php echo get_string('personas:section_output_contract', 'local_nmstream'); ?></strong></td></tr>
+                <tr><td colspan="4" class="small text-muted pb-2"><?php echo get_string('personas:section_output_contract_desc', 'local_nmstream'); ?></td></tr>
+                <?php
+                mod_messagestream_coach_override_row('output_schema', get_string('personas:field_output_schema', 'local_nmstream'), 'textarea', [], $currentoverrides, $baseconfig, 10);
+                mod_messagestream_coach_override_row('citation_rules', get_string('personas:field_citation_rules', 'local_nmstream'), 'textarea', [], $currentoverrides, $baseconfig, 8);
+                mod_messagestream_coach_override_row('validation_checklist', get_string('personas:field_validation_checklist', 'local_nmstream'), 'textarea', [], $currentoverrides, $baseconfig, 8);
                 ?>
                 </tbody>
             </table>
@@ -233,7 +270,8 @@ $ajaxurl = (new moodle_url('/mod/messagestream/ajax.php'))->out(false);
 
 <style>
 .coach-override-table td { vertical-align: middle; }
-.override-input .override-field:disabled { background: #f8f9fa; color: #aaa; }
+.override-input .override-field:disabled { background: #f8f9fa; color: #6c757d; }
+.override-input textarea.override-field:disabled { max-height: 14rem; overflow: auto; white-space: pre-wrap; }
 .override-hint { max-width: 220px; }
 </style>
 
@@ -244,12 +282,26 @@ $ajaxurl = (new moodle_url('/mod/messagestream/ajax.php'))->out(false);
             var row = this.closest('.override-row');
             var field = row.querySelector('.override-field');
             var fileInput = row.querySelector('.override-file-input');
+            var def = row.getAttribute('data-default');
+            if (def === null) {
+                def = '';
+            }
             field.disabled = !this.checked;
             if (fileInput) {
                 fileInput.disabled = !this.checked;
             }
             if (this.checked) {
+                // Start editable value from the current default preview if empty.
+                if (!field.value && def) {
+                    field.value = def;
+                }
                 field.focus();
+            } else {
+                // Restore grayed-out default preview when override is turned off.
+                field.value = def;
+                if (fileInput) {
+                    fileInput.value = '';
+                }
             }
         });
     });

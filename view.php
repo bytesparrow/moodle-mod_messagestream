@@ -23,7 +23,7 @@ $context = context_module::instance($cm->id);
 $messagestream->coursemodule = $cm->id;
 
 
-$PAGE->set_url(new moodle_url('/mod/messagestream/view.php', ['id' => $id]));
+$PAGE->set_url(new moodle_url('/mod/messagestream/view.php', ['id' => $id, 'view' => optional_param('view', 'stream', PARAM_ALPHA)]));
 $PAGE->set_title($messagestream->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_context($context);

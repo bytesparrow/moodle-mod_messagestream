@@ -26,10 +26,11 @@ class view implements renderable, templatable {
   public function export_for_template(renderer_base $output): stdClass {
 
     $viewmode = optional_param('view', 'stream', PARAM_ALPHA);
+    $cmid = (int) $this->messagestream->coursemodule;
 
     $data = new stdClass();
     $data->name = format_string($this->messagestream->name);
-    //fixing error "Before calling format_text(), the content must be processed with file_rewrite_pluginfile_urls() "
+    // Fixing error "Before calling format_text(), the content must be processed with file_rewrite_pluginfile_urls() "
     $description = file_rewrite_pluginfile_urls($this->messagestream->intro, 'pluginfile.php',  $this->context->id, 'mod_messagestream', 'activity', $this->messagestream->id);
     $data->description = format_text($description, $this->messagestream->introformat, ['context' => $this->context]);
     $data->points = $this->messagestream->points;
@@ -39,7 +40,7 @@ class view implements renderable, templatable {
     // Use StreamService to get context and render the stream
     $service = new \local_nmstream\StreamService();
     $currenctcontext = $service->getStreamRootContext();
-    $moodlecontext =  \context_module::instance($this->messagestream->coursemodule);
+    $moodlecontext =  \context_module::instance($cmid);
     if ($currenctcontext === null) {
       return "";
     }
@@ -58,28 +59,29 @@ class view implements renderable, templatable {
         'avatarUrl' => $coach['avatar_url'],
         'avatarEmoji' => $coach['avatar_emoji'],
     ];
-    
-    
 
-    //security
-    $caneditcoach = has_capability('moodle/course:manageactivities', $moodlecontext);
-    
+    // Tabs: Activity stream <-> Persona settings (teachers with manageactivities).
+    $caneditpersona = has_capability('moodle/course:manageactivities', $moodlecontext);
+    $data->showtabs = $caneditpersona;
+    $data->tab_stream_url = (new \moodle_url('/mod/messagestream/view.php', ['id' => $cmid, 'view' => 'stream']))->out(false);
+    $data->tab_persona_url = (new \moodle_url('/mod/messagestream/view.php', ['id' => $cmid, 'view' => 'coach']))->out(false);
+    $data->tab_stream_label = get_string('viewtab_stream', 'mod_messagestream');
+    $data->tab_persona_label = get_string('personas:activity_settings_tab', 'local_nmstream');
+    $data->tab_stream_active = ($viewmode !== 'coach');
+    $data->tab_persona_active = ($viewmode === 'coach');
+
     if ($viewmode === 'coach') {
-      if (!$caneditcoach) {
-
+      if (!$caneditpersona) {
         $data->mainhtml = \core\notification::error(get_string('nopermissions', 'error'));
-      }
-      else {
+      } else {
         //todo this is ugly AF
         ob_start();
-        $cmid = $this->messagestream->coursemodule;
         $messagestream = $this->messagestream;
         require dirname(dirname(__DIR__)) . '/views/coach_settings.php';
         $html = ob_get_clean();
         $data->mainhtml = $html;
       }
-    }
-    else {
+    } else {
       $data->mainhtml = $service->renderStream($currenctcontext, $streamoptions);
     }
 
@@ -88,12 +90,10 @@ class view implements renderable, templatable {
 
     if ($enableai) {
       $numcomments = $counts['comments'] - $counts['ai_comments'];
-      $data->string_stats = get_string('statinfo_with_ai', 'mod_messagestream', ['count_posts' => $counts['posts'], 'count_comments' => $numcomments,  'count_ai_comments' => $counts['ai_comments']]); 
-    }
-    else {
+      $data->string_stats = get_string('statinfo_with_ai', 'mod_messagestream', ['count_posts' => $counts['posts'], 'count_comments' => $numcomments,  'count_ai_comments' => $counts['ai_comments']]);
+    } else {
          $data->string_stats = get_string('statinfo', 'mod_messagestream', ['count_comments' =>  $counts['comments'], 'count_posts' => $counts['posts']]);
     }
-
 
     $data->getpointslabel = get_string('getpoints', 'mod_messagestream');
     return $data;

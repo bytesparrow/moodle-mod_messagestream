@@ -50,7 +50,8 @@ $DB->set_field('messagestream', 'persona_id', $personaid > 0 ? $personaid : null
 $service = new \local_nmstream\local\persona\PersonaService();
 $service->save_messagestream_overrides((int) $instance->id, $overrides);
 
-$compiled = $service->get_compiled_prompt_for_messagestream_instance((int) $instance->id);
+// rootId for persona resolution is the course-module id (cmid), not messagestream.id.
+$compiled = $service->get_compiled_prompt_for_messagestream_instance((int) $cm->id, true);
 
 echo json_encode([
     'success' => true,
