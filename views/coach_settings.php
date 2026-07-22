@@ -42,6 +42,12 @@ $contractdefaults = \local_nmstream\local\persona\PersonaCompiler::resolve_contr
 $baseconfig['output_schema'] = $contractdefaults['output_schema'];
 $baseconfig['citation_rules'] = $contractdefaults['citation_rules'];
 $baseconfig['validation_checklist'] = $contractdefaults['validation_checklist'];
+if (!isset($baseconfig['show_sources']) || $baseconfig['show_sources'] === '') {
+    $baseconfig['show_sources'] = \local_nmstream\local\persona\PersonaService::SHOW_SOURCES_YES;
+}
+if (!isset($baseconfig['citation_correction']) || $baseconfig['citation_correction'] === '') {
+    $baseconfig['citation_correction'] = \local_nmstream\local\persona\PersonaService::CITATION_CORRECTION_INHERIT;
+}
 
 /**
  * One override row (checkbox + input).
@@ -146,6 +152,20 @@ $sourcemodes = [
     'strict' => get_string('personas:source_strict', 'local_nmstream'),
     'open' => get_string('personas:source_open', 'local_nmstream'),
 ];
+$showsources = [
+    \local_nmstream\local\persona\PersonaService::SHOW_SOURCES_YES =>
+        get_string('personas:show_sources_yes', 'local_nmstream'),
+    \local_nmstream\local\persona\PersonaService::SHOW_SOURCES_NO =>
+        get_string('personas:show_sources_no', 'local_nmstream'),
+];
+$citationcorrection = [
+    \local_nmstream\local\persona\PersonaService::CITATION_CORRECTION_INHERIT =>
+        get_string('personas:citation_correction_inherit', 'local_nmstream'),
+    \local_nmstream\local\persona\PersonaService::CITATION_CORRECTION_ON =>
+        get_string('personas:citation_correction_on', 'local_nmstream'),
+    \local_nmstream\local\persona\PersonaService::CITATION_CORRECTION_OFF =>
+        get_string('personas:citation_correction_off', 'local_nmstream'),
+];
 $discussionmodes = [
     'never' => get_string('personas:discussion_never', 'local_nmstream'),
     'always' => get_string('personas:discussion_always', 'local_nmstream'),
@@ -237,6 +257,8 @@ $ajaxurl = (new moodle_url('/mod/messagestream/ajax.php'))->out(false);
                 <tr class="table-secondary"><td colspan="4"><strong><?php echo get_string('personas:section_knowledge', 'local_nmstream'); ?></strong></td></tr>
                 <?php
                 mod_messagestream_coach_override_row('source_mode', get_string('personas:field_source_mode', 'local_nmstream'), 'select', $sourcemodes, $currentoverrides, $baseconfig);
+                mod_messagestream_coach_override_row('show_sources', get_string('personas:field_show_sources', 'local_nmstream'), 'select', $showsources, $currentoverrides, $baseconfig);
+                mod_messagestream_coach_override_row('citation_correction', get_string('personas:field_citation_correction', 'local_nmstream'), 'select', $citationcorrection, $currentoverrides, $baseconfig);
                 mod_messagestream_coach_override_row('audience', get_string('personas:field_audience', 'local_nmstream'), 'text', [], $currentoverrides, $baseconfig);
                 ?>
                 <tr class="table-secondary"><td colspan="4"><strong><?php echo get_string('personas:section_task', 'local_nmstream'); ?></strong></td></tr>
