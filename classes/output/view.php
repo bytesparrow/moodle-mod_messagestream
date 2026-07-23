@@ -62,13 +62,6 @@ class view implements renderable, templatable {
 
     // Tabs: Activity stream <-> Persona settings (teachers with manageactivities).
     $caneditpersona = has_capability('moodle/course:manageactivities', $moodlecontext);
-    $data->showtabs = $caneditpersona;
-    $data->tab_stream_url = (new \moodle_url('/mod/messagestream/view.php', ['id' => $cmid, 'view' => 'stream']))->out(false);
-    $data->tab_persona_url = (new \moodle_url('/mod/messagestream/view.php', ['id' => $cmid, 'view' => 'coach']))->out(false);
-    $data->tab_stream_label = get_string('viewtab_stream', 'mod_messagestream');
-    $data->tab_persona_label = get_string('personas:activity_settings_tab', 'local_nmstream');
-    $data->tab_stream_active = ($viewmode !== 'coach');
-    $data->tab_persona_active = ($viewmode === 'coach');
 
     if ($viewmode === 'coach') {
       if (!$caneditpersona) {
